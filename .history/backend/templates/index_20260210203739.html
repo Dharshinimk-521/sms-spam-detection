@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spam Detection System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+
+<body>
+    <h1>Spam Detection System</h1>
+
+    <!-- 📊 SYSTEM STATS -->
+    <section>
+        <h2>System Statistics</h2>
+        <p><strong>Best Model:</strong> <span id="best-model">Loading...</span></p>
+        <p><strong>Accuracy:</strong> <span id="best-accuracy">0%</span></p>
+        <p><strong>Total Messages:</strong> <span id="total-messages">0</span></p>
+    </section>
+
+    <!-- 📈 VISUALIZATIONS -->
+    <section>
+        <h2>Model Insights</h2>
+
+        <img
+            src="{{ url_for('static', filename='visualizations/model_comparison.png') }}"
+            alt="Model Comparison"
+            width="400"
+        >
+
+        <img
+            src="{{ url_for('static', filename='visualizations/dataset_distribution.png') }}"
+            alt="Dataset Distribution"
+            width="400"
+        >
+    </section>
+
+    <!-- ✉️ MESSAGE ANALYSIS -->
+    <section>
+        <h2>Analyze a Message</h2>
+
+        <textarea
+            id="message-input"
+            rows="4"
+            cols="60"
+            placeholder="Enter a message to check if it's spam..."
+        ></textarea>
+        <br><br>
+
+        <button onclick="analyzeMessage()">Analyze</button>
+
+        <h3>Result</h3>
+        <p id="result-text"></p>
+
+        <h3>How the model analyzed your message</h3>
+        <div id="analysis-words"></div>
+    </section>
+</body>
+</html>

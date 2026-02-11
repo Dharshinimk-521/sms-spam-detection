@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Model files (optional if large)
+*.pkl
+
+# OS files
+.DS_Store
+
+# VS Code
+.vscode/

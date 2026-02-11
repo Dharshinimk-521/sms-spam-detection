@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Spam Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> SMS Spam Detection</h1>
+            <p> Message Verification System with ML</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Input Section -->
+            <div class="verification-section">
+                <h2> Verify Your Message:</h2>
+                <p class="subtitle">Enter an SMS message to check if it's spam or safe :)</p>
+                
+                <div class="input-container">
+                    <textarea 
+                        id="sms-input" 
+                        placeholder="Example: Congratulations! You've won $1000. Click here to claim..."
+                        rows="5"
+                    ></textarea>
+                    <button class="verify-btn" onclick="verifyMessage()">
+                        <span class="btn-text"> Verify Message</span>
+                    </button>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing message...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results" class="results-container" style="display: none;">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h3 id="result-title">✅ Verification Complete</h3>
+                        </div>
+                        
+                        <div class="prediction-badge" id="prediction-badge">
+                            <span id="prediction-text">HAM</span>
+                        </div>
+
+                        <div class="confidence-section">
+                            <h4>Confidence Scores</h4>
+                            <div class="confidence-bars">
+                                <div class="confidence-item">
+                                    <div class="confidence-label">
+                                        <span>✅ Safe (Ham)</span>
+                                        <span id="ham-percent">0%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill ham" id="ham-bar"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="confidence-item">
+                                    <div class="confidence-label">
+                                        <span>⚠️ Spam</span>
+                                        <span id="spam-percent">0%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill spam" id="spam-bar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="message-display">
+                            <h4>Message Analyzed:</h4>
+                            <p id="analyzed-message"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <h2>System Statistics</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Best Model</h3>
+                        <p class="stat-value" id="best-model">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Accuracy</h3>
+                        <p class="stat-value" id="best-accuracy">0%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Messages</h3>
+                        <p class="stat-value" id="total-messages">0</p>
+                    </div>
+                </div>
+
+                <!-- Model Comparison Graph -->
+                <div class="visualization-card">
+                    <h3> Model Accuracy Comparison</h3>
+                    <img src="/visualizations/model_comparison.png" alt="Model Comparison">
+                </div>
+
+                <!-- Dataset Distribution Graph -->
+                <div class="visualization-card">
+                    <h3>📈 Dataset Distribution</h3>
+                    <img src="/visualizations/dataset_distribution.png" alt="Dataset Distribution">
+                </div>
+            </div>
+
+            <!-- Quick Examples -->
+            <div class="examples-section">
+                <h2>💡 Try These Examples</h2>
+                <div class="example-buttons">
+                    <button class="example-btn" onclick="tryExample('spam')">
+                        Try Spam Example
+                    </button>
+                    <button class="example-btn" onclick="tryExample('ham')">
+                        Try Safe Example
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with Machine Learning • Powered by Flask & Scikit-learn</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+# 📩 SMS Spam Detection System
+
+A Machine Learning-powered web application that classifies SMS messages as **Spam** or **Safe (Ham)** using Natural Language Processing and multiple ML models.
+
+Built with **Flask, Scikit-learn, TF-IDF, and a responsive frontend UI**.
+
+---
+
+## 🚀 Features
+
+* 🔍 Real-time SMS spam detection
+* 📊 Confidence score visualization (Spam vs Ham)
+* 🏆 Automatic best model selection
+* 📈 Model accuracy comparison graph
+* 📉 Dataset distribution visualization
+* 💾 Persistent model storage (No retraining on every run)
+* ⚡ Fast predictions using saved model files
+* 🌐 Clean and interactive frontend interface
+
+---
+
+## 🧠 Machine Learning Models Used
+
+The system trains and compares:
+
+* Support Vector Machine (Linear Kernel)
+* Multinomial Naive Bayes
+* Logistic Regression
+
+The best-performing model is automatically selected and saved for deployment.
+
+---
+
+## 📂 Project Structure
+
+```
+SCAM_DETECT_PROJECT/
+│
+├── backend/
+│   ├── app.py
+│   ├── ml_model.py
+│   │
+│   ├── models/
+│   │   └── saved_models.pkl
+│   │
+│   ├── saved_models/
+│   │   ├── spam_model.pkl
+│   │   └── vectorizer.pkl
+│   │
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   ├── js/
+│   │   │   └── script.js
+│   │   └── visualizations/
+│   │       ├── dataset_distribution.png
+│   │       └── model_comparison.png
+│   │
+│   └── templates/
+│       └── index.html
+│
+├── data/
+│   └── spam.csv
+│
+├── venv/
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🛠️ Technologies Used
+
+### Backend
+
+* Python
+* Flask
+* Scikit-learn
+* Pandas
+* NumPy
+* Matplotlib
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+
+---
+
+## 📊 Dataset
+
+* SMS Spam Collection Dataset
+* Contains labeled messages:
+
+  * `ham` → Safe message
+  * `spam` → Spam message
+
+---
+
+## ⚙️ How It Works
+
+1. Dataset is loaded and preprocessed
+2. Text is converted using **TF-IDF Vectorization**
+3. Multiple ML models are trained
+4. Best-performing model is selected
+5. Model is saved using `pickle`
+6. Flask API serves predictions to frontend
+7. Frontend displays:
+
+   * Spam/Safe result
+   * Confidence scores
+   * Model statistics
+   * Accuracy comparison graph
+
+---
+
+## ▶️ How to Run the Project
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/your-username/sms-spam-detection.git
+cd sms-spam-detection
+```
+
+### 2️⃣ Create Virtual Environment (Recommended)
+
+```bash
+python -m venv venv
+```
+
+Activate:
+
+**Windows**
+
+```bash
+venv\Scripts\activate
+```
+
+**Mac/Linux**
+
+```bash
+source venv/bin/activate
+```
+
+### 3️⃣ Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+If `requirements.txt` is missing:
+
+```bash
+pip install flask pandas scikit-learn matplotlib numpy
+```
+
+### 4️⃣ Run the App
+
+```bash
+cd backend
+python app.py
+```
+
+Open in browser:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+## 💾 Model Persistence
+
+Models are saved in:
+
+```
+backend/models/saved_models.pkl
+backend/saved_models/spam_model.pkl
+backend/saved_models/vectorizer.pkl
+```
+
+This ensures:
+
+* No retraining every time server starts
+* Faster startup
+* Efficient deployment
+
+---
+
+## 📈 Visualizations
+
+The system generates:
+
+* 📊 Model Accuracy Comparison Chart
+* 📉 Dataset Distribution Chart
+
+Located in:
+
+```
+backend/static/visualizations/
+```
+
+---
+
+## 🎯 Future Improvements
+
+* Live charts using Chart.js instead of static images
+* Deploy to Render / Railway / Heroku
+* Add REST API authentication
+* Add email spam detection extension
+
+---
+
+## 👩‍💻 Author
+
+**Dharshini M K**
+B.Tech Computer Science Engineering
+Interested in Machine Learning, AI & Full Stack Development
+
+---
+
+📄 License
+
+This project is licensed under the MIT License.
