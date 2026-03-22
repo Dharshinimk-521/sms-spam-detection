@@ -149,10 +149,6 @@ plt.tight_layout()
 plt.savefig(os.path.join(VIS_DIR, "model_comparison.png"))
 plt.close()
 
-#mhahah
-import os
-print("Template folder:", app.template_folder)
-print("Templates found:", os.listdir(app.template_folder))
 
 # -------------------- ROUTES --------------------
 @app.route("/")
