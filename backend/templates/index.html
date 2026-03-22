@@ -3,142 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMS Spam Detection System</title>
+    <title>SMS Spam Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1> SMS Spam Detection</h1>
-            <p class="header"> Message Verification System with ML</p>
-        </header>
 
-        <div class="main-content">
-            <!-- Input Section -->
-            <div class="verification-section">
-                <h2> Verify Your Message:</h2>
-                <p class="subtitle">Enter an SMS message to check if it's spam or safe :)</p>
-                
-                <div class="input-container">
-                    <textarea 
-                        id="sms-input" 
-                        placeholder="Example: Congratulations! You've won $1000. Click here to claim..."
-                        rows="5"
-                    ></textarea>
-                    <button class="verify-btn" onclick="verifyMessage()">
-                        <span class="btn-text"> Verify Message</span>
-                    </button>
-                </div>
+  <!-- Ambient blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <!-- Scanline overlay -->
+  <div class="scanlines"></div>
 
-                <!-- Loading Spinner -->
-                <div id="loading" class="loading" style="display: none;">
-                    <div class="spinner"></div>
-                    <p>Analyzing message...</p>
-                </div>
+  <div class="container">
 
-                <!-- Results Section -->
-                <div id="results" class="results-container" style="display: none;">
-                    <div class="result-card">
-                        <div class="result-header">
-                            <h3 id="result-title">✅ Verification Complete</h3>
-                        </div>
-                        
-                        <div class="prediction-badge" id="prediction-badge">
-                            <span id="prediction-text">HAM</span>
-                        </div>
+    <!-- ── HEADER ── -->
+    <header>
+      <div class="badge-pill">ML · NLP · TF-IDF · SVM</div>
+      <h1><span class="grad-text">SMS Spam</span><br>Detector</h1>
+      <p class="tagline">Real-time message classification powered by machine learning</p>
+    </header>
 
-                        <div class="confidence-section">
-                            <h4>Confidence Scores</h4>
-                            <div class="confidence-bars">
-                                <div class="confidence-item">
-                                    <div class="confidence-label">
-                                        <span>✅ Safe (Ham)</span>
-                                        <span id="ham-percent">0%</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill ham" id="ham-bar"></div>
-                                    </div>
-                                </div>
-                                
-                                <div class="confidence-item">
-                                    <div class="confidence-label">
-                                        <span>⚠️ Spam</span>
-                                        <span id="spam-percent">0%</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill spam" id="spam-bar"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- ── MAIN CARD ── -->
+    <main class="glass-card">
 
-                        <div class="message-display">
-                            <h4>Message Analyzed:</h4>
-                            <p id="analyzed-message"></p>
-                        </div>
+      <!-- INPUT SECTION -->
+      <section class="section-verify">
+        <div class="section-label">
+          <span class="dot dot-cyan"></span> Message Classifier
+        </div>
+        <h2>Analyse Your Message</h2>
+        <p class="sub">Paste any SMS or message below and let the model decide.</p>
 
-                        <!-- 🔍 MODEL ANALYSIS (ADDED PART) -->
-                        <div id="analysis-box" style="display:none; margin-top:15px;">
-                            <h4 class="analyze-header"> Model Analysis Method: (Finding Key words)</h4>
-                            <p id="important-words"></p>
-                        </div>
-                        <!-- ✅ END ADDITION -->
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats Section -->
-            <div class="stats-section">
-                <h2>System Statistics</h2>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Best Model</h3>
-                        <p class="stat-value" id="best-model">Loading...</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Accuracy</h3>
-                        <p class="stat-value" id="best-accuracy">0%</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total Messages</h3>
-                        <p class="stat-value" id="total-messages">0</p>
-                    </div>
-                </div>
-
-                <div class="visualization-card">
-                    <h3> Model Accuracy Comparison</h3>
-                    <img src="{{ url_for('static', filename='visualizations/model_comparison.png') }}" alt="Model Comparison">
-                </div>
-
-                <div class="visualization-card">
-                    <h3>📈 Dataset Distribution</h3>
-                    <img src="{{ url_for('static', filename='visualizations/dataset_distribution.png') }}" alt="Dataset Distribution">
-                </div>
-            </div>
-
-            <!-- Quick Examples -->
-            <div class="examples-section">
-                <h2>💡 Try These Examples</h2>
-                <div class="example-buttons">
-                    <button class="example-btn" onclick="tryExample('spam')">
-                        Try Spam Example
-                    </button>
-                    <button class="example-btn" onclick="tryExample('ham')">
-                        Try Safe Example
-                    </button>
-                </div>
-            </div>
+        <div class="input-wrap">
+          <textarea
+            id="sms-input"
+            placeholder="e.g. Congratulations! You've won £1000. Claim now at link…"
+            rows="5"
+          ></textarea>
+          <div class="char-hint" id="char-hint">0 characters</div>
         </div>
 
-        <footer>
-            <p>Built with Machine Learning • Powered by Flask & Scikit-learn</p>
-        </footer>
-    </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="verifyMessage()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Analyse Message
+          </button>
+          <button class="btn-ghost" onclick="clearAll()">Clear</button>
+        </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <!-- Loading -->
+        <div id="loading" class="loading" style="display:none">
+          <div class="loader-ring"></div>
+          <p>Running inference…</p>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results-wrap" style="display:none">
+
+          <div class="result-header" id="result-header">
+            <div class="verdict-icon" id="verdict-icon"></div>
+            <div>
+              <div class="verdict-label" id="verdict-label">SAFE</div>
+              <div class="verdict-sub" id="verdict-sub">Message appears legitimate</div>
+            </div>
+          </div>
+
+          <!-- Confidence Bars -->
+          <div class="conf-block">
+            <div class="conf-row">
+              <span class="conf-name">✅ Safe (Ham)</span>
+              <span class="conf-pct" id="ham-percent">—</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill bar-ham" id="ham-bar"></div>
+            </div>
+          </div>
+
+          <div class="conf-block">
+            <div class="conf-row">
+              <span class="conf-name">⚠️ Spam</span>
+              <span class="conf-pct" id="spam-percent">—</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill bar-spam" id="spam-bar"></div>
+            </div>
+          </div>
+
+          <!-- Analyzed text -->
+          <div class="analysed-msg">
+            <div class="analysed-label">Analysed Text</div>
+            <p id="analyzed-message"></p>
+          </div>
+
+          <!-- Keywords -->
+          <div id="analysis-box" style="display:none" class="keywords-block">
+            <div class="keywords-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              Key Influencing Words
+            </div>
+            <div id="important-words" class="keywords-pills"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- DIVIDER -->
+      <div class="h-divider"></div>
+
+      <!-- STATS SECTION -->
+      <section class="section-stats">
+        <div class="section-label">
+          <span class="dot dot-violet"></span> Model Intelligence
+        </div>
+        <h2>System Statistics</h2>
+
+        <div class="stats-grid">
+          <div class="stat-tile">
+            <div class="stat-icon">🧠</div>
+            <div class="stat-val" id="best-model">—</div>
+            <div class="stat-name">Best Model</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-val" id="best-accuracy">—</div>
+            <div class="stat-name">Accuracy</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-icon">📨</div>
+            <div class="stat-val" id="total-messages">—</div>
+            <div class="stat-name">Training Messages</div>
+          </div>
+        </div>
+
+        <!-- Visualisations -->
+        <div class="vis-grid">
+          <div class="vis-card">
+            <div class="vis-title">
+              <span class="dot dot-cyan"></span> Model Accuracy Comparison
+            </div>
+            <img src="{{ url_for('static', filename='visualizations/model_comparison.png') }}" alt="Model Comparison">
+          </div>
+          <div class="vis-card">
+            <div class="vis-title">
+              <span class="dot dot-pink"></span> Dataset Distribution
+            </div>
+            <img src="{{ url_for('static', filename='visualizations/dataset_distribution.png') }}" alt="Dataset Distribution">
+          </div>
+        </div>
+      </section>
+
+      <!-- DIVIDER -->
+      <div class="h-divider"></div>
+
+      <!-- EXAMPLES SECTION -->
+      <section class="section-examples">
+        <div class="section-label">
+          <span class="dot dot-pink"></span> Quick Test
+        </div>
+        <h2>Try an Example</h2>
+        <p class="sub">Load a pre-written message and see the model in action.</p>
+
+        <div class="example-row">
+          <button class="example-btn example-spam" onclick="tryExample('spam')">
+            <span class="ex-badge ex-badge-spam">SPAM</span>
+            Load Spam Sample
+          </button>
+          <button class="example-btn example-ham" onclick="tryExample('ham')">
+            <span class="ex-badge ex-badge-ham">SAFE</span>
+            Load Safe Sample
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>Built with <span class="grad-text">Flask · Scikit-learn · TF-IDF</span></p>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

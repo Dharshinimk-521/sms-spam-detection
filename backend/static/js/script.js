@@ -1,133 +1,161 @@
-// Example messages
+// ── Examples ──────────────────────────────────────────────────────────────
 const examples = {
-    spam: "URGENT! You've won $5000! Click here now to claim your prize: http://fakescam.com",
-    ham: "Hey, are we still meeting for lunch tomorrow at 1pm? Let me know!"
+  spam: "URGENT! You've won $5000! Click here NOW to claim your prize before it expires: http://fakescam.win/claim",
+  ham:  "Hey, are we still on for lunch tomorrow at 1pm? Let me know if anything changes!"
 };
 
-// Verify message function
-async function verifyMessage() {
-    const message = document.getElementById('sms-input').value.trim();
-    
-    if (!message) {
-        alert('Please enter a message to verify!');
-        return;
+// ── Character counter ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadStats();
+
+  const input = document.getElementById('sms-input');
+  const hint  = document.getElementById('char-hint');
+
+  input.addEventListener('input', () => {
+    hint.textContent = `${input.value.length} character${input.value.length !== 1 ? 's' : ''}`;
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      verifyMessage();
     }
-    
-    // Show loading
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('results').style.display = 'none';
-    
-    try {
-        const response = await fetch('/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ message: message })
-        });
-        
-        const data = await response.json();
-        
-        // Hide loading
-        document.getElementById('loading').style.display = 'none';
-        
-        if (data.success) {
-            displayResults(data);
-        } else {
-            alert('Error: ' + data.error);
-        }
-        
-    } catch (error) {
-        document.getElementById('loading').style.display = 'none';
-        alert('Network error: ' + error.message);
-    }
-}
-
-// Display results
-function displayResults(data) {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.style.display = 'block';
-    
-    // Update prediction badge
-    const badge = document.getElementById('prediction-badge');
-    const predictionText = document.getElementById('prediction-text');
-    
-    if (data.is_spam) {
-        badge.className = 'prediction-badge spam';
-        predictionText.textContent = '⚠️ SPAM DETECTED';
-        document.getElementById('result-title').textContent = '⚠️ Warning: Potential Spam';
-    } else {
-        badge.className = 'prediction-badge ham';
-        predictionText.textContent = '✅ SAFE MESSAGE';
-        document.getElementById('result-title').textContent = '✅ Message is Safe';
-    }
-    
-    // Update confidence bars
-    const hamPercent = data.confidence.ham;
-    const spamPercent = data.confidence.spam;
-    
-    document.getElementById('ham-percent').textContent = hamPercent + '%';
-    document.getElementById('spam-percent').textContent = spamPercent + '%';
-    
-    document.getElementById('ham-bar').style.width = hamPercent + '%';
-    document.getElementById('spam-bar').style.width = spamPercent + '%';
-    
-    // Display analyzed message
-    document.getElementById('analyzed-message').textContent = data.message;
-    
-    // Scroll to results
-    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    
-        // 🔍 Show model analysis
-    const analysisBox = document.getElementById('analysis-box');
-    const importantWordsEl = document.getElementById('important-words');
-
-    if (data.analysis && data.analysis.important_words.length > 0) {
-        analysisBox.style.display = 'block';
-        importantWordsEl.textContent =
-            "Key words influencing decision: " +
-            data.analysis.important_words.join(", ");
-    } else {
-        analysisBox.style.display = 'none';
-    }
-
-}
-
-// Try example
-function tryExample(type) {
-    const message = examples[type];
-    document.getElementById('sms-input').value = message;
-    
-    // Auto-verify after setting example
-    setTimeout(() => {
-        verifyMessage();
-    }, 300);
-}
-
-// Load stats on page load
-async function loadStats() {
-    try {
-        const response = await fetch('/stats');
-        const data = await response.json();
-        
-        if (data.success) {
-            document.getElementById('best-model').textContent = data.best_model;
-            document.getElementById('best-accuracy').textContent = data.best_accuracy + '%';
-            document.getElementById('total-messages').textContent = data.dataset_info.total_messages;
-        }
-    } catch (error) {
-        console.error('Error loading stats:', error);
-    }
-}
-
-// Enter key to verify
-document.addEventListener('DOMContentLoaded', function() {
-    loadStats();
-    
-    document.getElementById('sms-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            verifyMessage();
-        }
-    });
+  });
 });
+
+// ── Clear ──────────────────────────────────────────────────────────────────
+function clearAll() {
+  document.getElementById('sms-input').value = '';
+  document.getElementById('char-hint').textContent = '0 characters';
+  document.getElementById('results').style.display  = 'none';
+  document.getElementById('loading').style.display  = 'none';
+}
+
+// ── Try example ────────────────────────────────────────────────────────────
+function tryExample(type) {
+  const input = document.getElementById('sms-input');
+  input.value = examples[type];
+  document.getElementById('char-hint').textContent =
+    `${input.value.length} characters`;
+  setTimeout(verifyMessage, 250);
+}
+
+// ── Main verify ────────────────────────────────────────────────────────────
+async function verifyMessage() {
+  const message = document.getElementById('sms-input').value.trim();
+  if (!message) {
+    shakeInput();
+    return;
+  }
+
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('results').style.display  = 'none';
+
+  try {
+    const res  = await fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+    const data = await res.json();
+
+    document.getElementById('loading').style.display = 'none';
+
+    if (data.success) {
+      displayResults(data);
+    } else {
+      showError(data.error || 'Unknown error');
+    }
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    showError(err.message);
+  }
+}
+
+// ── Display results ────────────────────────────────────────────────────────
+function displayResults(data) {
+  const wrap   = document.getElementById('results');
+  const header = document.getElementById('result-header');
+
+  // Verdict
+  const icon  = document.getElementById('verdict-icon');
+  const label = document.getElementById('verdict-label');
+  const sub   = document.getElementById('verdict-sub');
+
+  if (data.is_spam) {
+    icon.textContent  = '🚨';
+    label.textContent = 'SPAM DETECTED';
+    label.style.color = 'var(--red)';
+    sub.textContent   = 'This message shows signs of spam';
+    header.className  = 'result-header is-spam';
+  } else {
+    icon.textContent  = '✅';
+    label.textContent = 'SAFE MESSAGE';
+    label.style.color = 'var(--green)';
+    sub.textContent   = 'This message appears legitimate';
+    header.className  = 'result-header is-ham';
+  }
+
+  // Confidence bars
+  const hamPct  = data.confidence.ham;
+  const spamPct = data.confidence.spam;
+
+  document.getElementById('ham-percent').textContent  = hamPct  + '%';
+  document.getElementById('spam-percent').textContent = spamPct + '%';
+
+  // Animate bars after a tiny tick
+  requestAnimationFrame(() => {
+    document.getElementById('ham-bar').style.width  = hamPct  + '%';
+    document.getElementById('spam-bar').style.width = spamPct + '%';
+  });
+
+  // Analysed message
+  document.getElementById('analyzed-message').textContent = data.message;
+
+  // Keywords
+  const analysisBox = document.getElementById('analysis-box');
+  const pillsEl     = document.getElementById('important-words');
+
+  if (data.analysis && data.analysis.important_words.length > 0) {
+    pillsEl.innerHTML = data.analysis.important_words
+      .map(w => `<span class="kw-pill">${w}</span>`)
+      .join('');
+    analysisBox.style.display = 'block';
+  } else {
+    analysisBox.style.display = 'none';
+  }
+
+  // Reveal
+  wrap.style.display = 'flex';
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const res  = await fetch('/stats');
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('best-model').textContent    = data.best_model;
+      document.getElementById('best-accuracy').textContent = data.best_accuracy + '%';
+      document.getElementById('total-messages').textContent = data.dataset_info.total_messages.toLocaleString();
+    }
+  } catch (e) {
+    console.error('Stats error:', e);
+  }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function shakeInput() {
+  const el = document.getElementById('sms-input');
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.style.animation = 'shake 0.4s ease';
+  el.focus();
+}
+
+function showError(msg) {
+  console.error(msg);
+  // You could render a toast here; for now a simple alert
+  alert('Error: ' + msg);
+}
