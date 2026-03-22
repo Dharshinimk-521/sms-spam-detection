@@ -31,7 +31,9 @@ os.makedirs(VIS_DIR, exist_ok=True)
 os.makedirs(MODEL_DIR, exist_ok=True)
 
 # -------------------- FLASK APP --------------------
-app = Flask(__name__)
+app = Flask(__name__, 
+            template_folder=os.path.join(BASE_DIR, 'backend', 'templates'),
+            static_folder=os.path.join(BASE_DIR, 'backend', 'static'))
 
 # -------------------- LOAD DATA --------------------
 print("📂 Loading dataset from:", DATA_PATH)
